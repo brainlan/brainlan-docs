@@ -27,21 +27,26 @@ export default defineConfig({
     sitemap(),
     tailwind(),
     starlight({
-      title: "Docs with Tailwind",
+      title: "Brainlan Documentation",
+      logo: {
+        light: "/public/logo.svg",
+        dark: "/public/logo-white.svg",
+      },
       social: {
-        github: "https://github.com/withastro/starlight",
+        github: "https://github.com/brainlan",
       },
       sidebar: [
         {
-          label: "Guides",
-          items: [
-            // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", link: "/guides/example/" },
-          ],
+          label: "General",
+          autogenerate: { directory: "general" },
         },
         {
-          label: "Reference",
-          autogenerate: { directory: "reference" },
+          label: "Database",
+          autogenerate: { directory: "database", collapsed: true },
+        },
+        {
+          label: "Interfaces",
+          autogenerate: { directory: "interface" },
         },
       ],
       customCss: ["./src/tailwind.css"],

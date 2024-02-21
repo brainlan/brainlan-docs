@@ -1,0 +1,67 @@
+---
+interface Props {
+  schema: string;
+  table: string;
+}
+
+const { schema, table } = Astro.props;
+---
+
+<table-db data-schema={schema} data-table={table}>
+  <div class="relative overflow-x-auto">
+    <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
+      <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"> Name </th>
+          <th scope="col" class="px-6 py-3"> Format </th>
+          <th scope="col" class="px-6 py-3"> Description </th>
+          <th scope="col" class="px-6 py-3"> Default </th>
+        </tr>
+      </thead>
+      <tbody> </tbody>
+    </table>
+  </div>
+</table-db>
+
+<script>
+  import { api } from "../scripts/my/api";
+
+  class TableDb extends HTMLElement {
+    constructor() {
+      super();
+    }
+    async createTable(schema: string | undefined, table: string | undefined) {
+      let tbody: HTMLTableSectionElement | null = this.querySelector("tbody");
+      if (!tbody || !schema || !table) return;
+
+      const get: { definitions: { [key: string]: { properties: { [key: string]: { description?: string; format?: string; default?: string } } } } } = await api.get("https://tenlbvpoanzwbrbayeev.supabase.co/rest/v1/?select=id&apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlbmxidnBvYW56d2JyYmF5ZWV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU5MzkxODEsImV4cCI6MjAyMTUxNTE4MX0.dFfI_4bAefSc8O0EbfEyxW1_4th882-3AvuU5abgFys", { headers: { "Accept-Profile": schema } });
+
+      let tr: HTMLTableRowElement;
+      let td: HTMLTableCellElement;
+
+      for (let key in get.definitions[table].properties) {
+        tr = document.createElement("tr");
+
+        td = document.createElement("td");
+        td.appendChild(document.createTextNode(key));
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.appendChild(document.createTextNode(get.definitions[table].properties[key].format || ""));
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.appendChild(document.createTextNode(get.definitions[table].properties[key].description || ""));
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.appendChild(document.createTextNode(get.definitions[table].properties[key].default || ""));
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    async connectedCallback() {
+      await this.createTable(this.dataset.schema, this.dataset.table);
+    }
+  }
+  customElements.define("table-db", TableDb);
+</script>
