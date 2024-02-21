@@ -11,7 +11,7 @@ let adapter = vercel({
     maxDuration: 60,
   },
 });
-let site = "https://docs.brainlan.com";
+let site = "https://brainlan.com";
 if (process.argv[3] === "--node") {
   adapter = node({
     mode: "standalone",
@@ -33,8 +33,12 @@ export default defineConfig({
         dark: "/public/logo-white.svg",
       },
       social: {
-        github: "https://github.com/brainlan",
+        github: "https://github.com/orgs/brainlan/repositories",
       },
+      editLink: {
+        baseUrl: "https://github.com/brainlan/brainlan-docs/edit/main/",
+      },
+      lastUpdated: true,
       sidebar: [
         {
           label: "General",
